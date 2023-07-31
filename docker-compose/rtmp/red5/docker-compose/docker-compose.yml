@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  red5:
+    image: red5pro/red5:latest
+    container_name: red5_server
+    ports:
+      - "5080:5080"   # HTTP port for Red5 web interface
+      - "1935:1935"   # RTMP port for Red5 media streaming
+      - "8554:8554"   # RTSP port for Red5 media streaming
+    restart: always
