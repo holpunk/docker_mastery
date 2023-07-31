@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  srs:
+    image: ossrs/srs:latest
+    container_name: srs_server
+    ports:
+      - "1935:1935"   # RTMP port for SRS
+      - "1985:1985"   # HTTP port for SRS
+    restart: always
