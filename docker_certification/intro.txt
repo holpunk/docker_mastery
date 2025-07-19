@@ -1,0 +1,37 @@
+docker:
+1. docker is a platform for developing, shipping, and running applications in containers.
+2. containers are lightweight, portable, and self-sufficient units that can run anywhere.
+3. docker allows developers to package applications with all dependencies into a single container image.
+
+
+commands
+1. docker run: runs a container from an image.
+2. docker build: builds a Docker image from a Dockerfile.
+3. docker pull: pulls an image from a Docker registry.
+4. docker push: pushes an image to a Docker registry.
+5. docker ps: lists running containers.
+6. docker images: lists available images on the local machine.
+7. docker exec: executes a command in a running container.
+8. docker stop: stops a running container.
+9. docker rm: removes a stopped container.
+10. docker rmi: removes an image from the local machine.
+11. docker logs: retrieves logs from a container.
+12. docker network: manages Docker networks.
+13. docker volume: manages Docker volumes for persistent storage.
+14. docker inspect: retrieves detailed information about containers, images, or networks.
+15. docker-compose: a tool for defining and running multi-container Docker applications using a YAML file.
+
+
+These are some of the most commoly used docker commands. for the complete list of commands, you can refer to the official Docker documentation or run `docker --help` in your terminal.
+
+dockerfile
+1. A Dockerfile is a text file that contains instructions to build a Docker image.
+2. It specifies the base image, application code, dependencies, and commands to run when the container starts.
+3. Common instructions in a Dockerfile include:
+   - FROM: specifies the base image.
+   - COPY: copies files from the host to the container.
+   - RUN: executes commands during the image build process.
+   - CMD: specifies the command to run when the container starts.
+   - EXPOSE: indicates which ports the container listens on at runtime.
+   - ENV: sets environment variables in the container.
+   - WORKDIR: sets the working directory for subsequent instructions.
