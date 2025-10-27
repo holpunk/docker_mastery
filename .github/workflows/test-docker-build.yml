@@ -1,0 +1,42 @@
+name: Test Docker Builds
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-docker-images:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false # Continue testing other Dockerfiles even if one fails
+      matrix:
+        include:
+          - name: quarkus-app
+            context: ./Applications/dockerfiles/languages/java/quarkus
+            dockerfile: ./Applications/dockerfiles/languages/java/quarkus/quarkus_app.Dockerfile
+          - name: springboot-app
+            context: ./Applications/dockerfiles/languages/java/springboot
+            dockerfile: ./Applications/dockerfiles/languages/java/springboot/springboot_app.Dockerfile
+          - name: fastapi-app
+            context: ./Applications/dockerfiles/languages/python/fastapi
+            dockerfile: ./Applications/dockerfiles/languages/python/fastapi/fastapi_app.Dockerfile
+          - name: postgres-db
+            context: ./Applications/dockerfiles/databases/postgres
+            dockerfile: ./Applications/dockerfiles/databases/postgres/postgres.Dockerfile
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image for ${{ matrix.name }}
+        uses: docker/build-push-action@v5
+        with:
+          context: ${{ matrix.context }}
+          file: ${{ matrix.dockerfile }}
+          push: false # Only build the image, do not push to a registry
+          load: true # Load the image into the runner's Docker daemon
