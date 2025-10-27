@@ -10,17 +10,17 @@ jobs:
   build-docker-images:
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: false # Continue testing other Dockerfiles even if one fails
+      fail-fast: false
       matrix:
         include:
           - name: quarkus-app
-            context: ./Applications/dockerfiles/languages/java/quarkus
+            context: ./Applications/dockerfiles/languages/java/quarkus # Assumes Quarkus source is here
             dockerfile: ./Applications/dockerfiles/languages/java/quarkus/quarkus_app.Dockerfile
           - name: springboot-app
-            context: ./Applications/dockerfiles/languages/java/springboot
+            context: ./Applications/springboot-app # Corrected: Point to the Spring Boot app's root directory
             dockerfile: ./Applications/dockerfiles/languages/java/springboot/springboot_app.Dockerfile
           - name: fastapi-app
-            context: ./Applications/dockerfiles/languages/python/fastapi
+            context: ./Applications/fastapi-app # Corrected: Point to the FastAPI app's root directory
             dockerfile: ./Applications/dockerfiles/languages/python/fastapi/fastapi_app.Dockerfile
           - name: postgres-db
             context: ./Applications/dockerfiles/databases/postgres
@@ -38,5 +38,5 @@ jobs:
         with:
           context: ${{ matrix.context }}
           file: ${{ matrix.dockerfile }}
-          push: false # Only build the image, do not push to a registry
-          load: true # Load the image into the runner's Docker daemon
+          push: false
+          load: true
