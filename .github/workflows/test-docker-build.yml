@@ -17,7 +17,7 @@ jobs:
             context: ./Applications/dockerfiles/languages/java/quarkus # Assumes Quarkus source is here
             dockerfile: ./Applications/dockerfiles/languages/java/quarkus/quarkus_app.Dockerfile
           - name: springboot-app
-            context: ./Applications/springboot # Corrected: Point to the Spring Boot app's root directory
+            context: ./application_source_code/springboot # Corrected: Point to the Spring Boot app's root directory
             dockerfile: ./Applications/dockerfiles/languages/java/springboot/springboot_app.Dockerfile
           - name: fastapi-app
             context: ./Applications/fastapi-app # Corrected: Point to the FastAPI app's root directory
