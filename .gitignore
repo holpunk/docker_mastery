@@ -60,7 +60,6 @@ __pycache__/
 *.iml
 *.ipr
 *.iws
-*.class
 *.project
 *.settings/
 *.idea/
@@ -87,10 +86,9 @@ bin/
 *.obj
 *.o
 *.so
-*.exe
+
 *.dll
 *.dylib
-*.class
 
 # Rust
 /target/
@@ -100,7 +98,7 @@ bin/
 *.hi
 *.dyn_hi
 *.dyn_o
-*.o
+
 *.chi
 *.chs.h
 dist/
@@ -118,18 +116,16 @@ build/
 
 # IDEs and Editors
 ## JetBrains (IntelliJ, PyCharm, WebStorm, etc.)
-*.iml
+
 .idea/
-out/
-*.ipr
-*.iws
+
 
 ## Eclipse
 .project
 .metadata/
 *.tmp
 *.bak
-*.swp
+
 *~.nib
 .localhistory/
 
@@ -141,10 +137,6 @@ out/
 *.sublime-workspace
 *.sublime-project
 
-## Vim
-*.swp
-*.swo
-*.swn
 
 ## Emacs
 *~
@@ -152,15 +144,13 @@ out/
 .\#*
 
 ## NetBeans
-nbproject/private/
-build/
+
 nbbuild/
-dist/
+
 nbdist/
 *.nb-gradle
 
-# End of file markers
-*.bak
+
 *.old
 *.backup
 *.orig

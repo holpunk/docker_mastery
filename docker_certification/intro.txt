@@ -22,7 +22,7 @@ commands
 15. docker-compose: a tool for defining and running multi-container Docker applications using a YAML file.
 
 
-These are some of the most commoly used docker commands. for the complete list of commands, you can refer to the official Docker documentation or run `docker --help` in your terminal.
+These are some of the most commonly used docker commands. for the complete list of commands, you can refer to the official Docker documentation or run `docker --help` in your terminal.
 
 dockerfile
 1. A Dockerfile is a text file that contains instructions to build a Docker image.

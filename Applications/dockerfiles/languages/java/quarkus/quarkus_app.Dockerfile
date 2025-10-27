@@ -1,5 +1,5 @@
 # Stage 1: Build the native executable
-FROM quay.io/quarkus/ubi-quarkus-mandrel:23.0-java17 AS builder
+FROM quay.io/quarkus/ubi-quarkus-mandrel:23.1-java17 AS builder
 
 # Copy source code
 COPY --chown=quarkus:quarkus mvnw pom.xml ./
