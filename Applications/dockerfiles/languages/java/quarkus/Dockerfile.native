@@ -1,27 +1,31 @@
+# Applications/dockerfiles/languages/java/quarkus/Dockerfile.native
 ####
-# This Dockerfile is used in order to build a container that runs the Quarkus application in native (no JVM) mode.
+# Build the Quarkus application in native mode (GraalVM) with Maven before building the image.
 #
-# Before building the container image run:
+# Typical local native build (GraalVM installed):
+#   mvn -B -DskipTests package -Pnative
 #
-# ./gradlew build -Dquarkus.native.enabled=true
+# Or using container build (no local GraalVM):
+#   mvn -B -DskipTests package -Dquarkus.native.container-build=true -Pnative
 #
-# Then, build the image with:
+# The native executable will be in target/ as *-runner.
 #
-# docker build -f src/main/docker/Dockerfile.native -t quarkus/quarkus_sample .
+# Then build the image:
+#   docker build -f Applications/dockerfiles/languages/java/quarkus/Dockerfile.native -t quarkus/quarkus_sample-native .
 #
-# Then run the container using:
+# Run:
+#   docker run -i --rm -p 8080:8080 quarkus/quarkus_sample-native
 #
-# docker run -i --rm -p 8080:8080 quarkus/quarkus_sample
-#
-# The ` registry.access.redhat.com/ubi9/ubi-minimal:9.6` base image is based on UBI 9.
-# To use UBI 8, switch to `quay.io/ubi8/ubi-minimal:8.10`.
+# Base image: UBI 9 minimal. Switch to UBI 8 if required.
 ###
 FROM registry.access.redhat.com/ubi9/ubi-minimal:9.6
 WORKDIR /work/
 RUN chown 1001 /work \
-    && chmod "g+rwX" /work \
+    && chmod g+rwX /work \
     && chown 1001:root /work
-COPY --chown=1001:root --chmod=0755 build/*-runner /work/application
+
+# Copy the Maven native runner produced under target/ (e.g., my-app-1.0.0-SNAPSHOT-runner)
+COPY --chown=1001:root --chmod=0755 target/*-runner /work/application
 
 EXPOSE 8080
 USER 1001

@@ -1,4 +1,4 @@
-name: Test Docker Builds
+name: Build Java Images
 
 on:
   push:
@@ -9,8 +9,12 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: build-java-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  build-docker-images:
+  build:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -18,16 +22,21 @@ jobs:
         include:
           - name: springboot-app
             context: ./application_source_code/springboot
-            dockerfile: ./Applications/dockerfiles/languages/java/springboot/springboot_app.Dockerfile
-          - name: quarkus-app
+            dockerfile: Applications/dockerfiles/languages/java/springboot/springboot_app.Dockerfile
+            pre_build: false
+          - name: quarkus-jvm
             context: ./application_source_code/quarkus_sample
-            dockerfile: ./Applications/dockerfiles/languages/java/quarkus/Dockerfile.jvm
-          - name: quarkus_native-app
+            dockerfile: Applications/dockerfiles/languages/java/quarkus/Dockerfile.jvm
+            pre_build: true
+            native: false
+          - name: quarkus-native
             context: ./application_source_code/quarkus_sample
-            dockerfile: ./Applications/dockerfiles/languages/java/quarkus/Dockerfile.native
+            dockerfile: Applications/dockerfiles/languages/java/quarkus/Dockerfile.native
+            pre_build: true
+            native: true
 
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -37,10 +46,38 @@ jobs:
           ls -al '${{ matrix.context }}'
           test -f '${{ matrix.dockerfile }}'
 
-      - name: Set up Docker Buildx
+      - name: Set up Java
+        if: matrix.pre_build
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: maven
+
+      - name: Maven package (JVM)
+        if: matrix.pre_build && !matrix.native
+        working-directory: ${{ matrix.context }}
+        run: mvn -B -DskipTests package
+
+      - name: Maven package (Native)
+        if: matrix.pre_build && matrix.native
+        working-directory: ${{ matrix.context }}
+        run: mvn -B -DskipTests package -Dquarkus.native.container-build=true -Pnative
+
+      - name: Assert Quarkus artifacts
+        if: matrix.pre_build && !matrix.native
+        working-directory: ${{ matrix.context }}
+        run: test -d target/quarkus-app && ls -1 target/quarkus-app
+
+      - name: Assert native runner
+        if: matrix.pre_build && matrix.native
+        working-directory: ${{ matrix.context }}
+        run: ls -1 target/*-runner
+
+      - name: Set up Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build Docker image for ${{ matrix.name }}
+      - name: Build image
         uses: docker/build-push-action@v5
         with:
           context: ${{ matrix.context }}
@@ -49,3 +86,8 @@ jobs:
           push: false
           load: true
           provenance: false
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: List image
+        run: docker images | grep '${{ matrix.name }}' || true
