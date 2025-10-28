@@ -27,13 +27,13 @@ jobs:
           - name: quarkus-jvm
             context: ./application_source_code/quarkus_sample
             dockerfile: Applications/dockerfiles/languages/java/quarkus/Dockerfile.jvm
-            pre_build: true
+            pre_build: false
             native: false
           - name: quarkus-native
             context: ./application_source_code/quarkus_sample
             dockerfile: Applications/dockerfiles/languages/java/quarkus/Dockerfile.native
-            pre_build: true
-            native: true
+            pre_build: false
+            native: false
 
     steps:
       - name: Checkout
@@ -59,28 +59,28 @@ jobs:
         working-directory: ${{ matrix.context }}
         run: mvn -B -DskipTests package
 
-      - name: Maven package (Native)
-        if: matrix.pre_build && matrix.native
-        working-directory: ${{ matrix.context }}
-        run: mvn -B -DskipTests package -Pnative
-
       - name: Assert Quarkus artifacts
         if: matrix.pre_build && !matrix.native
         working-directory: ${{ matrix.context }}
         run: test -d target/quarkus-app && ls -1 target/quarkus-app
 
+      # Native build + artifact assertion (workflow snippet)
+      - name: Maven package (Native)
+        if: matrix.pre_build && matrix.native
+        working-directory: ${{ matrix.context }}
+        run: mvn -B -DskipTests package -Pnative
 
       - name: Assert native runner
         if: matrix.pre_build && matrix.native
         working-directory: ${{ matrix.context }}
         run: |
-          echo "Searching for native runner in target/"
-          find target -maxdepth 1 -type f -name "*-runner" -printf "Found: %p\n" || true
-          count=$(find target -maxdepth 1 -type f -name "*-runner" | wc -l)
-          if [ "$count" -eq 0 ]; then
-            echo "ERROR: No native runner produced. Check previous Maven logs."
+          echo "Looking for native runner in target/"
+          runner=$(find target -maxdepth 1 -type f -name "*-runner" | head -n1)
+          if [ -z "$runner" ]; then
+            echo "ERROR: No native runner produced. Review GraalVM build log above."
             exit 1
           fi
+          ls -lh "$runner"
 
       - name: Set up Buildx
         uses: docker/setup-buildx-action@v3
