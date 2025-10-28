@@ -1,32 +1,19 @@
-# Dockerfile.jvm (Maven version)
-####
-# Build the Quarkus application (JVM mode) with:
-#
-# mvn -B -q package -DskipTests
-#
-# Then build the image:
-#
-# docker build -f Applications/dockerfiles/languages/java/quarkus/Dockerfile.jvm -t quarkus/quarkus_sample-jvm .
-#
-# Run:
-#
-# docker run -i --rm -p 8080:8080 quarkus/quarkus_sample-jvm
-#
-###
-# Runtime image for Quarkus JVM (Maven fast-jar)
+# Build + runtime (Maven fast-jar)
+FROM maven:3.9.8-eclipse-temurin-21 AS build
+WORKDIR /workspace
+COPY pom.xml .
+RUN mvn -q -B dependency:go-offline
+COPY src src
+RUN mvn -q -B -DskipTests package
+
 FROM registry.access.redhat.com/ubi9/openjdk-21:1.23
-
 ENV LANGUAGE='en_US:en'
-
-# Copy fast-jar layout produced by: mvn -B -DskipTests package
-# Requires quarkus.package.type=fast-jar (default in recent versions)
-COPY --chown=185 target/quarkus-app/lib/ /deployments/lib/
-COPY --chown=185 target/quarkus-app/app/ /deployments/app/
-COPY --chown=185 target/quarkus-app/quarkus-run.jar /deployments/
-
+# Copy fast-jar layout
+COPY --chown=185 --from=build /workspace/target/quarkus-app/lib/ /deployments/lib/
+COPY --chown=185 --from=build /workspace/target/quarkus-app/app/ /deployments/app/
+COPY --chown=185 --from=build /workspace/target/quarkus-app/quarkus-run.jar /deployments/
 EXPOSE 8080
 USER 185
 ENV JAVA_OPTS_APPEND="-Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager"
 ENV JAVA_APP_JAR="/deployments/quarkus-run.jar"
-
 ENTRYPOINT ["/opt/jboss/container/java/run/run-java.sh"]
