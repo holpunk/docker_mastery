@@ -14,8 +14,9 @@ jobs:
       matrix:
         include:
           - name: springboot-app
-            context: ./Applications/springboot
+            context: ./application_source_code/springboot
             dockerfile: ./Applications/dockerfiles/languages/java/springboot/springboot_app.Dockerfile
+
 
     steps:
       - name: Checkout repository
