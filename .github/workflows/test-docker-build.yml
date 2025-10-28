@@ -19,6 +19,12 @@ jobs:
           - name: springboot-app
             context: ./application_source_code/springboot
             dockerfile: ./Applications/dockerfiles/languages/java/springboot/springboot_app.Dockerfile
+          - name: quarkus-app
+            context: ./application_source_code/quarkus_sample
+            dockerfile: ./Applications/dockerfiles/languages/java/quarkus/Dockerfile.jvm
+          - name: quarkus_native-app
+            context: ./application_source_code/quarkus_sample
+            dockerfile: ./Applications/dockerfiles/languages/java/quarkus/Dockerfile.native
 
     steps:
       - name: Checkout repository
