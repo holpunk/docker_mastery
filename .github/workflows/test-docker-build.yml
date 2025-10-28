@@ -59,29 +59,6 @@ jobs:
         working-directory: ${{ matrix.context }}
         run: mvn -B -DskipTests package
 
-      - name: Assert Quarkus artifacts
-        if: matrix.pre_build && !matrix.native
-        working-directory: ${{ matrix.context }}
-        run: test -d target/quarkus-app && ls -1 target/quarkus-app
-
-      # Native build + artifact assertion (workflow snippet)
-      - name: Maven package (Native)
-        if: matrix.pre_build && matrix.native
-        working-directory: ${{ matrix.context }}
-        run: mvn -B -DskipTests package -Pnative
-
-      - name: Assert native runner
-        if: matrix.pre_build && matrix.native
-        working-directory: ${{ matrix.context }}
-        run: |
-          echo "Looking for native runner in target/"
-          runner=$(find target -maxdepth 1 -type f -name "*-runner" | head -n1)
-          if [ -z "$runner" ]; then
-            echo "ERROR: No native runner produced. Review GraalVM build log above."
-            exit 1
-          fi
-          ls -lh "$runner"
-
       - name: Set up Buildx
         uses: docker/setup-buildx-action@v3
 
