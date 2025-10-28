@@ -23,17 +23,15 @@ jobs:
           - name: springboot-app
             context: ./application_source_code/springboot
             dockerfile: Applications/dockerfiles/languages/java/springboot/springboot_app.Dockerfile
-            pre_build: false
+            pre_build: true
           - name: quarkus-jvm
             context: ./application_source_code/quarkus_sample
             dockerfile: Applications/dockerfiles/languages/java/quarkus/Dockerfile.jvm
-            pre_build: false
-            native: false
+            pre_build: true
           - name: quarkus-native
             context: ./application_source_code/quarkus_sample
             dockerfile: Applications/dockerfiles/languages/java/quarkus/Dockerfile.native
-            pre_build: false
-            native: false
+            pre_build: true
 
     steps:
       - name: Checkout
