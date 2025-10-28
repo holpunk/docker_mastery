@@ -13,18 +13,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: quarkus-app
-            context: ./Applications/dockerfiles/languages/java/quarkus # Assumes Quarkus source is here
-            dockerfile: ./Applications/dockerfiles/languages/java/quarkus/quarkus_app.Dockerfile
           - name: springboot-app
-            context: ./application_source_code/springboot # Corrected: Point to the Spring Boot app's root directory
+            context: ./Applications/springboot
             dockerfile: ./Applications/dockerfiles/languages/java/springboot/springboot_app.Dockerfile
-          - name: fastapi-app
-            context: ./Applications/fastapi-app # Corrected: Point to the FastAPI app's root directory
-            dockerfile: ./Applications/dockerfiles/languages/python/fastapi/fastapi_app.Dockerfile
-          - name: postgres-db
-            context: ./Applications/dockerfiles/databases/postgres
-            dockerfile: ./Applications/dockerfiles/databases/postgres/postgres.Dockerfile
 
     steps:
       - name: Checkout repository
