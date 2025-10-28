@@ -1,14 +1,19 @@
-# Build + runtime (Maven fast-jar)
+# dockerfile
+# `Applications/dockerfiles/languages/java/quarkus/Dockerfile.jvm`
+# Multi-stage build for Quarkus JVM fast-jar
 FROM maven:3.9.8-eclipse-temurin-21 AS build
 WORKDIR /workspace
+
+# Copy only pom.xml first for dependency layer caching
 COPY pom.xml .
 RUN mvn -q -B dependency:go-offline
-COPY src src
+
+# Copy sources (ensure `src/` exists at build context root)
+COPY src/ src/
 RUN mvn -q -B -DskipTests package
 
 FROM registry.access.redhat.com/ubi9/openjdk-21:1.23
 ENV LANGUAGE='en_US:en'
-# Copy fast-jar layout
 COPY --chown=185 --from=build /workspace/target/quarkus-app/lib/ /deployments/lib/
 COPY --chown=185 --from=build /workspace/target/quarkus-app/app/ /deployments/app/
 COPY --chown=185 --from=build /workspace/target/quarkus-app/quarkus-run.jar /deployments/
