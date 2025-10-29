@@ -1,4 +1,4 @@
-name: Build Java Images
+name: Testing Build of images using dockerfile for multiple Programming Languages
 
 on:
   push:
@@ -24,6 +24,10 @@ jobs:
             context: ./application_source_code/java/springboot
             dockerfile: Applications/dockerfiles/languages/java/springboot/springboot_app.Dockerfile
             pre_build: true
+          - name: flask-app
+            context: ./application_source_code/python/flask
+            dockerfile: Applications/dockerfiles/languages/python/flask/flask.Dockerfile
+            pre_build: false
 
     steps:
       - name: Checkout
@@ -44,8 +48,21 @@ jobs:
           java-version: 21
           cache: maven
 
+      - name: Set up Python
+        if: ${{ !matrix.pre_build }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        if: ${{ !matrix.pre_build }}
+        working-directory: ${{ matrix.context }}
+        run: |
+          pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
       - name: Maven package (JVM)
-        if: matrix.pre_build && !matrix.native
+        if: matrix.pre_build
         working-directory: ${{ matrix.context }}
         run: mvn -B -DskipTests package
 
