@@ -21,16 +21,8 @@ jobs:
       matrix:
         include:
           - name: springboot-app
-            context: ./application_source_code/springboot
+            context: ./application_source_code/java/springboot
             dockerfile: Applications/dockerfiles/languages/java/springboot/springboot_app.Dockerfile
-            pre_build: true
-          - name: quarkus-jvm
-            context: ./application_source_code/quarkus_sample
-            dockerfile: Applications/dockerfiles/languages/java/quarkus/Dockerfile.jvm
-            pre_build: true
-          - name: quarkus-native
-            context: ./application_source_code/quarkus_sample
-            dockerfile: Applications/dockerfiles/languages/java/quarkus/Dockerfile.native
             pre_build: true
 
     steps:
